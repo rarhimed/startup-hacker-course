@@ -1,9 +1,12 @@
 <template>
 <div class="app">
-    <Dialog v-if="showBookForm" :title="currentBook?.id ? 'Редактировать книгу' : 'Добавить книгу'" @close="hideForm()">
-        <BookForm v-if="showBookForm" :modelValue="currentBook"
-        @update:modelValue="saveBook" @cancel="hideForm" />
-    </Dialog>
+    <!-- Обертка Dialog в компонент Transition для анимации появления/исчезновения -->
+    <Transition name="dialog">
+        <Dialog v-if="showBookForm" :title="currentBook?.id ? 'Редактировать книгу' : 'Добавить книгу'" @close="hideForm()">
+            <BookForm v-if="showBookForm" :modelValue="currentBook"
+            @update:modelValue="saveBook" @cancel="hideForm" />
+        </Dialog>
+    </Transition>
     <div class="book-actions-list-wrapper">
         <div class="book-actions-list-info">
             <span>Кол-во книг: {{ totalBooks }}</span>
@@ -19,8 +22,10 @@
         </div>
     </div>
     <div class="book-list">
+        <!-- ИСПРАВЛЕНИЕ БАГА #1: Было v-bind:update:rating, должно быть @update:rating 
+             v-bind передает значение как prop, а для события нужен @ (v-on) -->
         <BookCard v-for="book in books" :key="book.id" :book="book"
-            v-bind:update:rating="updateRating" @edit="editBook" @remove="removeBook" />
+            @update:rating="updateRating" @edit="editBook" @remove="removeBook" />
     </div>
 </div>
 </template>
@@ -43,11 +48,17 @@ function updateRating(id, rating) {
     return book;
     });
 }
+// ИСПРАВЛЕНИЕ БАГА #3: Было books.value.filter(...) без присвоения
+// Метод filter() не изменяет исходный массив, а возвращает новый, поэтому нужно присвоить результат
 function removeBook(id) {
-    books.value.filter((book) => book.id !== id);
+    books.value = books.value.filter((book) => book.id !== id);
 }
+// ИСПРАВЛЕНИЕ БАГА #2: Было currentBook.value = books.value.find(...)
+// Это присваивало ссылку на объект из массива, а не копию, поэтому редактирование меняло исходный объект
+// Теперь создаем копию через spread-оператор { ...book }, чтобы форма работала с копией
 function editBook(id) {
-    currentBook.value = books.value.find((book) => book.id === id);
+    const book = books.value.find((book) => book.id === id);
+    currentBook.value = book ? { ...book } : null;
     showForm();
 }
 function saveBook(data) {
@@ -59,13 +70,15 @@ function saveBook(data) {
     }
 }
 
+// ИСПРАВЛЕНИЕ БАГА #4: В строке return было return data; для всех книг
+// Это заменяло все книги на редактируемую. Теперь возвращаем текущий элемент m для несовпадающих id
 function updateBook(data) {
     books.value = books.value.map((m) => {
     if (m.id === data.id) {
         data.rating = m.rating;
         return data;
     }
-    return data;
+    return m; // Исправлено: было return data;
     });
     hideForm();
 }
@@ -118,5 +131,22 @@ function removeRatings() {
             }
         }
     }
+}
+
+/* Анимация для модального окна Dialog */
+/* Fade-in + Slide-up эффект - оба работают одновременно */
+
+/* Активное состояние анимации - определяет длительность и тип перехода */
+.dialog-enter-active,
+.dialog-leave-active {
+    transition: all 0.3s ease-out;
+}
+
+/* Начальное состояние при появлении (enter) и конечное при исчезновении (leave) */
+/* Элемент невидим (opacity: 0) и сдвинут вниз (translateY: 30px) */
+.dialog-enter-from,
+.dialog-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
 }
 </style>

@@ -3,7 +3,8 @@
     <input type="hidden" name="id" v-model="form.id" />
     <div class="book-form-input">
         <label for="name">Название</label>
-        <input type="text" name="name" v-model="form.name"/>
+        <!-- Template ref для автоматического фокуса при открытии формы -->
+        <input ref="nameInputRef" type="text" name="name" v-model="form.name"/>
         <span class="book-form-error">{{ errors.name }}</span>
     </div>
     <div class="book-form-input">
@@ -42,12 +43,16 @@
 </form>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref, watch, nextTick } from "vue";
+import { debounce } from "lodash";
 
 const emit = defineEmits(["update:modelValue", "cancel"]);
 const props = defineProps({
     modelValue: { type: Object, default: null },
 });
+
+// Template ref для поля ввода названия книги
+const nameInputRef = ref(null);
 
 const genres = reactive([
     { text: "Драма", value: "Драма" },
@@ -136,6 +141,39 @@ function clearErrors() {
     errors.genres = null;
     errors.inTheaters = null;
 }
+
+// Автоматический фокус на поле названия при открытии формы
+// Следим за изменением modelValue (когда форма открывается)
+watch(
+    () => props.modelValue,
+    async () => {
+        // nextTick гарантирует, что DOM уже обновлен и элемент существует
+        await nextTick();
+        // Устанавливаем фокус на поле ввода названия
+        if (nameInputRef.value) {
+            nameInputRef.value.focus();
+        }
+    },
+    { immediate: true } // immediate: true - выполнить сразу при монтировании компонента
+);
+
+// Имитация отложенной отправки на сервер с использованием debounce
+// Создаем debounced функцию, которая будет вызвана через 500мс после последнего изменения
+const sendToServer = debounce((text) => {
+    console.log(`Отправили ${text} на сервер`);
+}, 500);
+
+// Наблюдатель на поле ввода названия книги
+// Вызывается каждый раз, когда пользователь вводит текст
+watch(
+    () => form.name,
+    (newValue) => {
+        // Если поле не пустое, вызываем debounced функцию
+        if (newValue) {
+            sendToServer(newValue);
+        }
+    }
+);
 </script>
 <style lang="scss">
 .book-form {

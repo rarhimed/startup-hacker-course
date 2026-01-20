@@ -2,18 +2,50 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+// CSS-переменные для цветов
+:root {
+    // Основные цвета текста
+    --text-primary: #fff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.7);
+    --text-dark: #333;
+    --text-dark-secondary: #666;
+    
+    // Фоны
+    --bg-gradient-start: #667eea;
+    --bg-gradient-end: #764ba2;
+    --bg-card: #fff;
+    --bg-glass: rgba(255, 255, 255, 0.15);
+    --bg-glass-light: rgba(255, 255, 255, 0.1);
+    
+    // Карточки игры
+    --card-front-start: #4a90d9;
+    --card-front-end: #357abd;
+    --card-front-border: #5a9fe0;
+    --card-back-start: #ffffff;
+    --card-back-end: #f0f0f0;
+    --card-back-border: #e0e0e0;
+    
+    // Тени
+    --shadow-card: rgba(0, 0, 0, 0.15);
+    --shadow-card-hover: rgba(0, 0, 0, 0.2);
+    --shadow-text: rgba(0, 0, 0, 0.2);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html, body {
     height: 100%;
+    margin: 0;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: rgb(181, 207, 241);
 }
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
 
-
-
-.app-container {
+#app {
     height: 100%;
 }

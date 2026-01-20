@@ -1,19 +1,70 @@
 @use "normalize.css";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+// CSS-переменные для цветов
+:root {
+    // Основные цвета
+    --text-primary: #e0e0f0;
+    --text-secondary: #8a8ab0;
+    --text-accent: #00d4ff;
+    --text-live: #ff4757;
+    
+    // Фоны
+    --bg-gradient-start: #0f0f1a;
+    --bg-gradient-mid: #1a1a2e;
+    --bg-gradient-end: #16213e;
+    --bg-box: rgba(26, 26, 46, 0.8);
+    --bg-segment-start: #2a2a3e;
+    --bg-segment-end: #1a1a2e;
+    --bg-settings: rgba(0, 0, 0, 0.2);
+    --bg-settings-hover: rgba(0, 0, 0, 0.3);
+    
+    // Границы
+    --border-light: rgba(255, 255, 255, 0.1);
+    --border-segment: #3a3a5e;
+    --border-accent: rgba(0, 212, 255, 0.3);
+    
+    // Эффекты
+    --glow-cyan: rgba(0, 212, 255, 0.5);
+    --glow-cyan-strong: rgba(0, 212, 255, 0.1);
+    --glow-red: rgba(255, 71, 87, 0.8);
+    --shadow-box: rgba(0, 0, 0, 0.5);
+    --shadow-segment: rgba(0, 0, 0, 0.3);
+}
+
+// Сброс стилей
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
 html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: rgb(181, 207, 241);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
+    font-weight: 600;
 }
 
-
-
+// Контейнер приложения
 .app-container {
     height: 100%;
+    min-height: 100vh;
+}
+
+// Цифры используют моноширинный шрифт
+.s-timersegment-digit {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
 }

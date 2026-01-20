@@ -1,12 +1,10 @@
 <template>
 <div class="app">
-    <!-- Обертка Dialog в компонент Transition для анимации появления/исчезновения -->
-    <Transition name="dialog">
-        <Dialog v-if="showBookForm" :title="currentBook?.id ? 'Редактировать книгу' : 'Добавить книгу'" @close="hideForm()">
-            <BookForm v-if="showBookForm" :modelValue="currentBook"
-            @update:modelValue="saveBook" @cancel="hideForm" />
-        </Dialog>
-    </Transition>
+    <!-- Dialog инкапсулирует свою анимацию внутри компонента -->
+    <Dialog v-if="showBookForm" :title="currentBook?.id ? 'Редактировать книгу' : 'Добавить книгу'" @close="hideForm()">
+        <BookForm v-if="showBookForm" :modelValue="currentBook"
+        @update:modelValue="saveBook" @cancel="hideForm" />
+    </Dialog>
     <div class="book-actions-list-wrapper">
         <div class="book-actions-list-info">
             <span>Кол-во книг: {{ totalBooks }}</span>
@@ -131,22 +129,5 @@ function removeRatings() {
             }
         }
     }
-}
-
-/* Анимация для модального окна Dialog */
-/* Fade-in + Slide-up эффект - оба работают одновременно */
-
-/* Активное состояние анимации - определяет длительность и тип перехода */
-.dialog-enter-active,
-.dialog-leave-active {
-    transition: all 0.3s ease-out;
-}
-
-/* Начальное состояние при появлении (enter) и конечное при исчезновении (leave) */
-/* Элемент невидим (opacity: 0) и сдвинут вниз (translateY: 30px) */
-.dialog-enter-from,
-.dialog-leave-to {
-    opacity: 0;
-    transform: translateY(30px);
 }
 </style>

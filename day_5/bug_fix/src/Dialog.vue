@@ -1,19 +1,21 @@
 <template>
-    <!-- Подложка -->
-    <div class="dialog-overlay" @click.self="$emit('close')">
-        <!-- Окно -->
-        <div class="dialog-wrapper">
-            <button class="dialog-close-button" @click="$emit('close')">
-                <FontAwesomeIcon icon="xmark" />
-            </button>
+    <Transition name="dialog">
+        <!-- Подложка - статичная, анимируется только по fade (opacity) -->
+        <div class="dialog-overlay" @click.self="$emit('close')">
+            <!-- Окно - анимируется по fade + slide-up (opacity + translateY) -->
+            <div class="dialog-wrapper">
+                <button class="dialog-close-button" @click="$emit('close')">
+                    <FontAwesomeIcon icon="xmark" />
+                </button>
 
-            <h3 class="dialog-title" v-if="title">{{ title }}</h3>
+                <h3 class="dialog-title" v-if="title">{{ title }}</h3>
 
-            <div class="dialog-inner">
-                <slot />
+                <div class="dialog-inner">
+                    <slot />
+                </div>
             </div>
         </div>
-    </div>
+    </Transition>
 </template>
 
 <script setup>
@@ -25,6 +27,7 @@ defineEmits(['close'])
 </script>
 
 <style scoped lang="scss">
+/* Подложка - статичная, анимируется только по fade */
 .dialog-overlay {
     position: fixed;
     inset: 0;
@@ -35,8 +38,9 @@ defineEmits(['close'])
     z-index: 1000;
 }
 
+/* Окно - анимируется по fade + slide-up */
 .dialog-wrapper {
-    position: relative; // ВАЖНО
+    position: relative;
     background: #fff;
     border-radius: 8px;
     padding: 24px;
@@ -66,3 +70,29 @@ defineEmits(['close'])
 }
 </style>
 
+<style lang="scss">
+/* Анимация для модального окна - инкапсулирована в компоненте */
+/* Используем глобальные стили (без scoped) для работы с классами Transition */
+
+/* Подложка анимируется только по fade (opacity) - остаётся статичной */
+.dialog-enter-active,
+.dialog-leave-active {
+    transition: opacity 0.3s ease-out;
+}
+
+.dialog-enter-active .dialog-wrapper,
+.dialog-leave-active .dialog-wrapper {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.dialog-enter-from,
+.dialog-leave-to {
+    opacity: 0;
+}
+
+.dialog-enter-from .dialog-wrapper,
+.dialog-leave-to .dialog-wrapper {
+    opacity: 0;
+    transform: translateY(30px);
+}
+</style>
